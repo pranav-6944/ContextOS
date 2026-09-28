@@ -2,18 +2,29 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   MessageSquare, FolderArchive, Compass, Grid, Settings, 
   Send, Upload, Trash2, Sparkles, RefreshCw, Cpu, Check, 
-  Copy, ExternalLink, HardDrive, Shield, AlertCircle
+  Copy, ExternalLink, HardDrive, Shield, AlertCircle,
+  Activity, Radio, Eye, Layers, Filter
 } from 'lucide-react';
 import { api } from '../services/api';
-import Galaxy3DCanvas from '../components/Galaxy3DCanvas';
+import SkeuoMeter from '../components/SkeuoMeter';
+import SkeuoKnob from '../components/SkeuoKnob';
+import SkeuoSwitch from '../components/SkeuoSwitch';
 import InspectorDrawer from '../components/InspectorDrawer';
 
-export default function Dashboard({ bionicStatus, onRefreshStatus }) {
-  const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'vault' | 'galaxy' | 'matrix' | 'settings'
+export default function Dashboard({ bionicStatus, onRefreshStatus, setView }) {
+  const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'vault' | 'spectrum' | 'matrix' | 'settings'
   const [documents, setDocuments] = useState([]);
   const [chunks, setChunks] = useState([]);
   const [selectedChunk, setSelectedChunk] = useState(null);
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
+
+  // Spectrum Analyzer State
+  const [vuCosineLevel, setVuCosineLevel] = useState(0.78);
+  const [vuDecibelLevel, setVuDecibelLevel] = useState(0.55);
+  const [vectorZoom, setVectorZoom] = useState(1.0);
+  const [similarityThreshold, setSimilarityThreshold] = useState(0.5);
+  const [activeDocFilter, setActiveDocFilter] = useState('ALL');
+
 
   // Chat State
   const [messages, setMessages] = useState([
@@ -133,11 +144,16 @@ export default function Dashboard({ bionicStatus, onRefreshStatus }) {
                 return updated;
               });
             } else if (payload.type === 'citations') {
-              setActiveCitations(payload.data || []);
+              const citList = payload.data || [];
+              setActiveCitations(citList);
+              if (citList.length > 0 && citList[0].score) {
+                setVuCosineLevel(Math.min(0.96, Math.max(0.3, citList[0].score)));
+                setVuDecibelLevel(Math.min(0.92, Math.max(0.2, 0.4 + (citList.length * 0.1))));
+              }
               setMessages(prev => {
                 const updated = [...prev];
                 const last = { ...updated[updated.length - 1] };
-                last.citations = payload.data || [];
+                last.citations = citList;
                 updated[updated.length - 1] = last;
                 return updated;
               });
@@ -272,15 +288,15 @@ export default function Dashboard({ bionicStatus, onRefreshStatus }) {
             </button>
 
             <button
-              onClick={() => setActiveTab('galaxy')}
+              onClick={() => setActiveTab('spectrum')}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                activeTab === 'galaxy'
+                activeTab === 'spectrum'
                   ? 'bg-gradient-to-r from-cyan-500/20 to-purple-600/20 border border-cyan-500/40 text-cyan-300 shadow-lg shadow-cyan-500/10'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <Compass className="w-4 h-4" />
-              <span>3D Neural Galaxy</span>
+              <Activity className="w-4 h-4 text-cyan-400" />
+              <span>VU Spectrum Analyzer</span>
             </button>
 
             <button
@@ -509,16 +525,251 @@ export default function Dashboard({ bionicStatus, onRefreshStatus }) {
           </div>
         )}
 
-        {/* TAB 3: 3D NEURAL GALAXY */}
-        {activeTab === 'galaxy' && (
-          <div className="flex-1 w-full h-full relative">
-            <Galaxy3DCanvas 
-              chunks={chunks} 
-              activeCitations={activeCitations}
-              onSelectChunk={handleOpenChunk}
-            />
+        {/* TAB 3: VECTOR VU SPECTRUM & RADAR ANALYZER */}
+        {activeTab === 'spectrum' && (
+          <div className="flex-1 p-6 lg:p-8 overflow-y-auto space-y-6 max-w-7xl mx-auto w-full">
+            
+            {/* Header & Status Diode */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-700">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <h2 className="text-2xl font-black text-white uppercase font-mono tracking-tight">
+                    Vector VU Spectrum & Signal Analyzer
+                  </h2>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-cyan-500/40 text-cyan-300 font-bold uppercase">
+                    768-D BUS
+                  </span>
+                </div>
+                <p className="text-xs font-mono text-slate-400 mt-1">
+                  Real-time analog galvanometer telemetry and 2D dense vector projection radar.
+                </p>
+              </div>
+
+              {/* Document Filter Selector */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono text-slate-400 uppercase">CHASSIS FILTER:</span>
+                <select
+                  value={activeDocFilter}
+                  onChange={(e) => setActiveDocFilter(e.target.value)}
+                  className="skeuo-inset px-3 py-1.5 rounded-xl text-xs font-mono text-cyan-300 border border-slate-700 outline-none cursor-pointer"
+                >
+                  <option value="ALL">ALL SOURCES ({chunks.length})</option>
+                  {documents.map((d, i) => (
+                    <option key={i} value={d.name}>{d.name} ({d.chunks_count})</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* TOP DUAL GALVANOMETER VU METER BRIDGE */}
+            <div className="skeuo-chassis p-6 rounded-3xl border border-slate-700/80 shadow-2xl relative">
+              <div className="absolute top-3 left-3 w-3 h-3 skeuo-screw" />
+              <div className="absolute top-3 right-3 w-3 h-3 skeuo-screw" />
+              <div className="absolute bottom-3 left-3 w-3 h-3 skeuo-screw" />
+              <div className="absolute bottom-3 right-3 w-3 h-3 skeuo-screw" />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-center">
+                {/* Left Needle: Cosine Coherence */}
+                <div className="flex flex-col items-center">
+                  <SkeuoMeter 
+                    value={vuCosineLevel} 
+                    label="COSINE COHERENCE" 
+                    unit="SIMILARITY" 
+                    min={0} 
+                    max={1} 
+                    width={260} 
+                    height={140} 
+                  />
+                  <div className="mt-2 text-center font-mono text-xs">
+                    <span className="text-slate-400">TARGET CONFIDENCE: </span>
+                    <span className="text-cyan-400 font-bold">{(vuCosineLevel * 100).toFixed(1)}%</span>
+                  </div>
+                </div>
+
+                {/* Right Needle: Signal Density dB */}
+                <div className="flex flex-col items-center">
+                  <SkeuoMeter 
+                    value={vuDecibelLevel} 
+                    label="SIGNAL DENSITY" 
+                    unit="DECIBELS" 
+                    min={0} 
+                    max={1} 
+                    width={260} 
+                    height={140} 
+                  />
+                  <div className="mt-2 text-center font-mono text-xs">
+                    <span className="text-slate-400">HARMONIC INTENSITY: </span>
+                    <span className="text-amber-400 font-bold">{(vuDecibelLevel * 10 - 2).toFixed(1)} dB</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* RADAR CRT PROJECTION GRID & CONTROLS */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* Radar CRT Display (2 Columns) */}
+              <div className="lg:col-span-2 skeuo-screen p-6 rounded-3xl min-h-[440px] flex flex-col justify-between relative overflow-hidden">
+                {/* CRT Glass Scanlines */}
+                <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.03)_50%,transparent_51%)] bg-[size:100%_4px] pointer-events-none" />
+                
+                {/* Radar Sweep rings */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+                  <div className="w-[360px] h-[360px] rounded-full border border-cyan-400 animate-spin [animation-duration:16s]" />
+                  <div className="w-[240px] h-[240px] rounded-full border border-cyan-400/50 absolute" />
+                  <div className="w-[120px] h-[120px] rounded-full border border-cyan-400/30 absolute" />
+                  <div className="w-full h-px bg-cyan-400/20 absolute" />
+                  <div className="h-full w-px bg-cyan-400/20 absolute" />
+                </div>
+
+                {/* Scope Header */}
+                <div className="flex items-center justify-between text-xs font-mono text-cyan-300 z-10">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full skeuo-diode-emerald" />
+                    <span>CRT VECTOR PROJECTION RADAR // 2D TOPOLOGY</span>
+                  </div>
+                  <span className="text-slate-400">CHUNKS SHOWN: {
+                    activeDocFilter === 'ALL' 
+                      ? chunks.length 
+                      : chunks.filter(c => c.doc_name === activeDocFilter).length
+                  }</span>
+                </div>
+
+                {/* Radar Plot Field */}
+                <div className="relative w-full h-[320px] my-3 z-10 overflow-hidden">
+                  {chunks
+                    .filter(c => activeDocFilter === 'ALL' || c.doc_name === activeDocFilter)
+                    .map((c, idx) => {
+                      // Project coordinates normalized to radar box
+                      const posX = 50 + (c.x || Math.sin(idx * 1.618) * 35) * (vectorZoom * 0.9);
+                      const posY = 50 + (c.y || Math.cos(idx * 1.618) * 35) * (vectorZoom * 0.9);
+                      const isCited = activeCitations.some(cit => cit.chunk_id === c.chunk_id || cit.source_id === c.source_id);
+
+                      return (
+                        <div
+                          key={c.chunk_id || idx}
+                          onClick={() => handleOpenChunk(c)}
+                          style={{
+                            left: `${Math.max(5, Math.min(95, posX))}%`,
+                            top: `${Math.max(5, Math.min(95, posY))}%`
+                          }}
+                          className={`absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer group transition-transform hover:scale-150 ${
+                            isCited ? 'z-30' : 'z-20'
+                          }`}
+                          title={`${c.doc_name} (Page ${c.page}): ${c.snippet?.slice(0, 60)}...`}
+                        >
+                          <div className={`w-3 h-3 rounded-full flex items-center justify-center transition-all ${
+                            isCited
+                              ? 'bg-emerald-400 shadow-[0_0_12px_#34d399] ring-2 ring-emerald-300 animate-ping'
+                              : 'bg-cyan-400/80 hover:bg-cyan-300 shadow-[0_0_6px_rgba(6,182,212,0.8)]'
+                          }`}>
+                            <div className="w-1 h-1 rounded-full bg-white" />
+                          </div>
+
+                          {/* Hover Tooltip Card */}
+                          <div className="hidden group-hover:block absolute bottom-5 left-1/2 -translate-x-1/2 w-48 p-2.5 rounded-lg skeuo-chassis border border-cyan-400/60 text-[10px] font-mono text-slate-200 shadow-2xl pointer-events-none z-50">
+                            <span className="text-cyan-300 font-bold block truncate">{c.doc_name}</span>
+                            <span className="text-slate-400 block">Page {c.page} • {c.word_count} words</span>
+                            <span className="text-slate-300 line-clamp-2 mt-1">{c.snippet}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+
+                {/* Scope Footer Stats */}
+                <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 z-10 border-t border-cyan-500/20 pt-2">
+                  <span>SCALE: {vectorZoom.toFixed(1)}x MAGNIFICATION</span>
+                  <span>BEARING: 045° NNE</span>
+                  <span className="text-emerald-400">ACTIVE TARGETS: {activeCitations.length}</span>
+                </div>
+              </div>
+
+              {/* Tactile Control & Spectrum Bay (1 Column) */}
+              <div className="skeuo-chassis p-6 rounded-3xl border border-slate-700 space-y-6 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-xs font-mono uppercase tracking-wider text-slate-300 font-bold mb-4 flex items-center gap-2">
+                    <Sliders className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Radar Calibration</span>
+                  </h3>
+
+                  {/* Rotary Controls */}
+                  <div className="grid grid-cols-2 gap-4 pb-4 border-b border-slate-800">
+                    <div className="skeuo-inset p-3.5 rounded-xl flex flex-col items-center text-center space-y-2">
+                      <span className="text-[10px] font-mono uppercase text-slate-400">Zoom Span</span>
+                      <SkeuoKnob 
+                        value={vectorZoom} 
+                        onChange={setVectorZoom} 
+                        min={0.5} 
+                        max={2.5} 
+                        label="ZOOM" 
+                        size={64} 
+                      />
+                      <span className="text-xs font-mono text-cyan-400 font-bold">{vectorZoom.toFixed(1)}x</span>
+                    </div>
+
+                    <div className="skeuo-inset p-3.5 rounded-xl flex flex-col items-center text-center space-y-2">
+                      <span className="text-[10px] font-mono uppercase text-slate-400">Threshold</span>
+                      <SkeuoKnob 
+                        value={similarityThreshold} 
+                        onChange={setSimilarityThreshold} 
+                        min={0.1} 
+                        max={0.9} 
+                        label="THRESH" 
+                        size={64} 
+                      />
+                      <span className="text-xs font-mono text-purple-400 font-bold">{(similarityThreshold * 100).toFixed(0)}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Top Citation Readout */}
+                <div className="space-y-3">
+                  <span className="text-[11px] font-mono uppercase text-slate-400 font-bold block">
+                    Target Proximity Channel
+                  </span>
+                  {activeCitations.length === 0 ? (
+                    <div className="skeuo-inset p-4 rounded-xl text-center text-xs font-mono text-slate-500">
+                      Run a query in RAG Studio to lock onto chunk citations.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {activeCitations.slice(0, 3).map((cit, cIdx) => (
+                        <div 
+                          key={cIdx} 
+                          onClick={() => handleOpenChunk(cit)}
+                          className="skeuo-inset p-3 rounded-xl flex items-center justify-between cursor-pointer hover:border-cyan-500/40 border border-transparent transition-all"
+                        >
+                          <div className="text-xs font-mono truncate max-w-[150px]">
+                            <span className="text-cyan-300 font-bold block truncate">{cit.doc_name}</span>
+                            <span className="text-[10px] text-slate-400">Page {cit.page}</span>
+                          </div>
+                          <span className="text-xs font-mono text-emerald-400 font-bold">
+                            {(cit.score * 100).toFixed(0)}%
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Manual Calibration Action */}
+                <button
+                  onClick={() => {
+                    setVuCosineLevel(0.85);
+                    setVuDecibelLevel(0.70);
+                  }}
+                  className="w-full skeuo-btn py-2.5 rounded-xl text-xs font-mono font-bold text-slate-200 uppercase tracking-wider cursor-pointer"
+                >
+                  Test Needle Deflection
+                </button>
+              </div>
+
+            </div>
+
           </div>
         )}
+
 
         {/* TAB 4: VECTOR MATRIX (BENTO) */}
         {activeTab === 'matrix' && (

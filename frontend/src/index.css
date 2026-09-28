@@ -2,83 +2,200 @@
 
 @layer base {
   :root {
-    --bg-dark: #05070f;
-    --bg-surface: #0a0e1c;
-    --cyan-glow: rgba(0, 240, 255, 0.4);
-    --purple-glow: rgba(168, 85, 247, 0.4);
+    --chassis-dark: #0a0d14;
+    --panel-metal: #151922;
+    --panel-elevated: #1e2433;
+    --accent-cyan: #00f0ff;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-ruby: #ef4444;
   }
 
   body {
-    background-color: var(--bg-dark);
-    color: #f8fafc;
+    background-color: var(--chassis-dark);
+    color: #e2e8f0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
   }
 }
 
-/* Glassmorphism & Custom 21st.dev Utilities */
-.glass-panel {
-  background: rgba(11, 16, 32, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* ==========================================================================
+   Skeuomorphic Master Design System (UI-UX-PRO-MAX Guidelines)
+   Tactile hardware surfaces, 135-deg directional lighting, debossed wells
+   ========================================================================== */
+
+/* Heavy Machined Metal Faceplate */
+.skeuo-chassis {
+  background: linear-gradient(180deg, #252b3b 0%, #171c28 2%, #0e121a 98%, #080a0f 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  border-bottom: 2px solid #000000;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(0, 0, 0, 0.8);
+  box-shadow: 
+    0 12px 32px rgba(0, 0, 0, 0.75),
+    0 2px 6px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-.glass-panel-hover {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.glass-panel-hover:hover {
-  background: rgba(16, 24, 48, 0.85);
-  border-color: rgba(0, 240, 255, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.15);
-}
-
-.neon-border-cyan {
-  border: 1px solid rgba(0, 240, 255, 0.4);
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+/* Debossed / Recessed Well (In-Set Bezel) */
+.skeuo-inset {
+  background: linear-gradient(180deg, #07090e 0%, #0c1017 40%, #121822 100%);
+  box-shadow: 
+    inset 0 4px 10px rgba(0, 0, 0, 0.95),
+    inset 0 1px 3px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(255, 255, 255, 0.12);
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.neon-border-purple {
-  border: 1px solid rgba(168, 85, 247, 0.4);
-  box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
+/* Tactile Spring Pushbutton */
+.skeuo-btn {
+  background: linear-gradient(180deg, #374151 0%, #1f2937 45%, #111827 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  border-bottom: 2px solid #000000;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.6),
+    0 1px 2px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  user-select: none;
 }
 
-.gradient-text-cyan-purple {
-  background: linear-gradient(135deg, #00f0ff 0%, #a855f7 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.skeuo-btn:hover {
+  background: linear-gradient(180deg, #4b5563 0%, #283344 45%, #151d2a 100%);
+  border-top-color: rgba(255, 255, 255, 0.5);
 }
 
-.gradient-text-white {
-  background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.skeuo-btn:active {
+  transform: translateY(2px);
+  box-shadow: 
+    inset 0 3px 6px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(255, 255, 255, 0.15);
+  border-top-color: #000000;
 }
 
-/* Animated Grid Background */
-.cyber-grid {
-  background-size: 40px 40px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+/* Primary Cyan Tactile Button */
+.skeuo-btn-primary {
+  background: linear-gradient(180deg, #0284c7 0%, #0369a1 40%, #075985 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
+  border-bottom: 2px solid #082f49;
+  box-shadow: 
+    0 4px 14px rgba(2, 132, 199, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-/* Custom Scrollbars */
-::-webkit-scrollbar {
+.skeuo-btn-primary:hover {
+  background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 40%, #0369a1 100%);
+  box-shadow: 
+    0 6px 18px rgba(2, 132, 199, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.skeuo-btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: 
+    inset 0 3px 8px rgba(0, 0, 0, 0.8),
+    0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Domed Jewel LED Diode */
+.skeuo-diode-green {
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #34d399 25%, #059669 65%, #064e3b 100%);
+  box-shadow: 
+    0 0 10px rgba(16, 185, 129, 0.8),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.8);
+  border: 1px solid #064e3b;
+}
+
+.skeuo-diode-cyan {
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #38bdf8 25%, #0284c7 65%, #082f49 100%);
+  box-shadow: 
+    0 0 10px rgba(0, 240, 255, 0.85),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.8);
+  border: 1px solid #082f49;
+}
+
+.skeuo-diode-amber {
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #fbbf24 25%, #d97706 65%, #78350f 100%);
+  box-shadow: 
+    0 0 10px rgba(245, 158, 11, 0.85),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.8);
+  border: 1px solid #78350f;
+}
+
+/* Glass Screen Cover with Specular Glare */
+.skeuo-screen {
+  background: #030508;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.skeuo-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Authentic Rivet / Screw */
+.skeuo-screw {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #94a3b8 0%, #475569 50%, #1e293b 100%);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  position: relative;
+  display: inline-block;
+}
+
+.skeuo-screw::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 2px;
   width: 6px;
-  height: 6px;
+  height: 1.5px;
+  background: #0f172a;
+}
+
+/* Physical Rocker Switch */
+.skeuo-rocker {
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  border: 1px solid #374151;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+/* Custom Scrollbar for Industrial Consoles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(5, 7, 15, 0.5);
+  background: #080b10;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.9);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 9999px;
+  background: linear-gradient(180deg, #475569 0%, #334155 100%);
+  border-radius: 4px;
+  border: 1px solid #1e293b;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 240, 255, 0.4);
+  background: linear-gradient(180deg, #64748b 0%, #475569 100%);
 }

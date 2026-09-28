@@ -1,53 +1,91 @@
-# ContextOS 🌌
-### Full-Stack 3D Animated RAG Operating System
+# ContextOS 🎛️
+### The Tactile Skeuomorphic Operating Console for Air-Gapped Local RAG
 
 [![React](https://img.shields.io/badge/React-19-61DAFB.svg?style=flat&logo=react)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-6-646CFF.svg?style=flat&logo=vite)](https://vitejs.dev)
 [![TailwindCSS v4](https://img.shields.io/badge/TailwindCSS-v4-38B2AC.svg?style=flat&logo=tailwind-css)](https://tailwindcss.com)
-[![Three.js](https://img.shields.io/badge/Three.js-WebGL-000000.svg?style=flat&logo=three.js)](https://threejs.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
-[![LM Studio / Bionic](https://img.shields.io/badge/Bionic_LLM-Local_GPU-00F0FF.svg?style=flat)](http://localhost:1234/v1)
+[![Bionic LLM](https://img.shields.io/badge/Bionic_LLM-Local_GPU-00F0FF.svg?style=flat)](http://localhost:1234/v1)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
-> A modern, full-stack, local-first Retrieval-Augmented Generation (RAG) platform featuring interactive 3D WebGL neural topology, multi-section landing pages, a comprehensive control dashboard, and zero-cloud private LLM inference via Bionic & LM Studio.
+> ContextOS is an analog precision, skeuomorphic document intelligence console powered by strictly local LLMs via Bionic & LM Studio. Designed with tactile hardware chassis aesthetics—anodized titanium, rotary potentiometers, galvanometer VU meters, rocker switches, and CRT vector radars. Zero cloud dependencies, 100% private.
 
 ---
 
-## 🌟 ContextOS vs. Standard Streamlit RAG Projects
+## 🌟 Architectural Differentiation
 
-| Feature | Standard Streamlit App | **ContextOS Full-Stack** |
-| :--- | :--- | :--- |
-| **Frontend Architecture** | Python script with static reruns | **React 19 + Vite + Tailwind v4 Single-Page Application** |
-| **Landing Pages** | None (Immediate plain chat box) | **Multi-Section Landing Page** (Hero with 3D Canvas, 21st.dev Bento Grid, 5-Stage Interactive Pipeline, Benchmarks, FAQ) |
-| **Dashboard** | Basic widgets | **Modular Workspace** (RAG Studio, Document Vault, 3D Neural Galaxy, Bento Matrix, Engine Settings) |
-| **3D Vector Visualization** | None | **Interactive WebGL Three.js Constellation** with OrbitControls & laser retrieval pulses |
-| **Hardware Privacy** | Often requires cloud OpenAI keys | **100% Air-Gapped Local Inference** via Bionic / LM Studio (`http://localhost:1234/v1`) |
-| **Model Offline Resilience** | Crashes on connection errors | **Adaptive Standby Synthesizer** (Instant semantic retrieval while GPU models initialize) |
+| Evaluation Metric | Standard College Streamlit App | **ContextOS Skeuomorphic Console** | Cloud SaaS (OpenAI / AWS) |
+| :--- | :--- | :--- | :--- |
+| **Interface Design** | Basic flat Python forms | **Skeuomorphic Hardware Deck** (Braun / Dieter Rams aesthetic, 135° directional lighting, debossed insets, jewel LEDs) | Generic flat web SaaS |
+| **Tactile Components** | Plain sliders & dropdowns | **Physical Rotary Potentiometers, Rocker Switches & Analog VU Meters** | Standard HTML inputs |
+| **Dedicated Pages** | 1 single linear page | **7 Dedicated Hardware Pages** (Console Deck, Mainframe Dashboard, Operator Clearance, Terms Plate, Storage Manifest, Privacy Guarantee, Technical Manual) | Complex multi-tenant portal |
+| **Vector Inspection** | Hidden or basic tables | **CRT 2D Vector Projection Radar & VU Spectrum Analyzer** | Black-box embedding API |
+| **Data Privacy** | Often temp files or cloud keys | **100% Air-Gapped Local Inference** (0 Outbound WAN packets) | Documents sent to remote servers |
+| **Offline Resilience** | Crashes on connection loss | **Adaptive Standby Synthesizer** (Never crashes; instant semantic retrieval) | Fails on internet interruption |
+| **Recurring Cost** | $0.00 or API charges | **$0.00 Forever** (Runs on local GPU / CPU) | High per-token billing |
+
+---
+
+## 🎛️ Dedicated Hardware Pages
+
+ContextOS provides 7 dedicated pages accessible from the machined console header and chassis backplate:
+
+1. **Console Deck (`/` - Landing)**:
+   - **Hero Master Console**: Dual animated Galvanometer VU meters, rotary dial potentiometers, physical rocker switches, and real-time Bionic link diode.
+   - **Modular Bento Rackmount Bay**: 6 hardware modules with status indicators.
+   - **Patchbay Pipeline Workbench**: Interactive 5-stage physical signal transformation.
+   - **Oscilloscope & Semantic Harmonic Calibrator**: Real-time twistable knobs modulating an animated SVG semantic waveform.
+   - **Hardware Topology Benchmark Matrix**: Side-by-side technical evaluation against Streamlit and Cloud SaaS.
+   - **Chassis Rear IO & Patch Matrix**: Visualizing ports 01-04 (Bionic Bus, FastAPI Socket, Vector DMA Bus, Air-Gap Isolator).
+   - **Tactile Operator FAQ Accordion**: Expandable hardware inquiries.
+   - **Heavy Titanium Engagement Nameplate**: Direct launch CTA.
+
+2. **Hardware Console (`/dashboard`)**:
+   - **RAG Studio Terminal**: CRT phosphor screen, streaming typewriter output, and interactive citation badges.
+   - **Document Vault**: Multi-document ingestion bin with deletion, chunk count, and preloaded sample laboratory notes.
+   - **Vector VU Spectrum & Signal Analyzer**: Dual analog galvanometer meters (Cosine Coherence & Signal Density dB) and 2D CRT radar projection scope with active target crosshairs.
+   - **Dense Vector Matrix**: Bento card grid displaying all 768-D chunks with coordinates and word count.
+   - **Engine Settings**: Mechanical knobs and sliders for top-k, temperature, and local model selection.
+
+3. **Operator Clearance Terminal (`/auth`)**:
+   - Stamped clearance station featuring biometric fingerprint touch scanner, 12-key numeric PIN pad, and security clearance badge.
+
+4. **Industrial Specifications & Terms (`/terms`)**:
+   - Stamped industrial specification plate covering air-gapped local compute terms, zero cloud liability, and MIT licensing.
+
+5. **Storage & Cookie Manifest (`/cookies`)**:
+   - Complete storage manifest demonstrating 0 third-party tracking cookies, LocalStorage allocation breakdown, and hardware cache purge button.
+
+6. **Air-Gap Privacy Guarantee (`/privacy`)**:
+   - Stamped air-gap security certificate detailing 0 telemetry network isolation and local ephemeral memory policies.
+
+7. **Technical Manual & Schematics (`/docs`)**:
+   - System schematics, local Bionic / LM Studio connection guide, and complete REST API endpoint matrix.
 
 ---
 
 ## 🏗️ 5-Stage RAG Pipeline Architecture
 
 ```
-[ Documents: PDF / DOCX / TXT / MD / CSV / JSON ]
-                        │
-                        ▼  Stage 1: Multi-Format Parsing
-[ Clean Text Segments with Page & Section Metadata ]
-                        │
-                        ▼  Stage 2: Recursive Character Chunking
+[ Ingestion Intake: PDF / DOCX / TXT / MD / CSV / JSON ]
+                         │
+                         ▼  Stage 1: Multi-Format Parser
+[ Clean Text Streams with Page & Section Metadata ]
+                         │
+                         ▼  Stage 2: Recursive Window Splitter
 [ 600-Char Windows with 120-Char Overlap ]
-                        │
-                        ▼  Stage 3: 768-D Vector Embeddings
-[ Nomic Embed v1.5 / Normalized Matrix ] ───► [ 3D PCA Projection & WebGL Render ]
-                        │
-                        ▼  Stage 4: Cosine Nearest-Neighbor Search
-[ Top-K Ranked Context Chunks with Match Scores ]
-                        │
-                        ▼  Stage 5: Augmented Generation & SSE Streaming
-[ Bionic / LM Studio Local GPU (http://localhost:1234/v1) ]
-                        │
-                        ▼
-[ Real-Time Typewriter Output with Interactive Citations ]
+                         │
+                         ▼  Stage 3: 768-D Vector Encoder
+[ Nomic Embed v1.5 / Normalized Matrix ] ───► [ 2D Radar Projection & VU Meters ]
+                         │
+                         ▼  Stage 4: Cosine Distance Search
+[ Nearest-Neighbor Dot-Product Ranking ]
+                         │
+                         ▼  Stage 5: Local GPU Inference & SSE Stream
+[ Bionic / LM Studio Local Engine (http://localhost:1234/v1) ]
+                         │
+                         ▼
+[ Real-Time Phosphor CRT Output + Clickable Source Citations ]
 ```
 
 ---
@@ -68,7 +106,7 @@ cd ContextOS
 # Install backend dependencies
 pip install -r requirements.txt
 
-# Install frontend dependencies and build SPA
+# Install frontend dependencies and compile production build
 cd frontend
 npm install
 npm run build
@@ -82,59 +120,7 @@ python run.py
 Open your browser to:
 👉 **[http://localhost:8000](http://localhost:8000)**
 
-*(For active frontend development with hot-reloading: run `npm run dev` inside `frontend/` and navigate to `http://localhost:5173`)*.
-
----
-
-## 🖥️ Platform Tour
-
-### 1. Multi-Section Landing Page
-- **Hero Section**: Display headline, 3D interactive neural nucleus widget with mouse parallax, quick telemetry metrics, and primary CTA buttons.
-- **Bento Grid Showcase**: 21st.dev inspired cards highlighting 3D Neural Constellation, 100% Air-Gapped Privacy, Multi-Format Vault, and Standby Engine.
-- **Interactive 3D Pipeline**: Visual 5-stage pipeline flow with clickable stage payloads and mathematical descriptions.
-- **Benchmarks & Compatibility**: Matrix comparing tested models (Qwen 3.5, Gemma 2B/4B, Qwen 12B) and architecture advantages.
-- **Interactive FAQ**: Expandable accordions answering technical, hardware, and architectural queries.
-
-### 2. Full Control Dashboard
-- **RAG Studio (Chat)**: Real-time SSE streaming typewriter chat with quick-prompt chips, interactive citation pills, and telemetry badges.
-- **Document Vault**: Multi-document drag-and-drop uploader supporting PDF, DOCX, TXT, MD, CSV, JSON, document table with deletion, and one-click sample knowledge preloader.
-- **3D Neural Galaxy**: Fullscreen interactive WebGL vector space with manual orbit drag controls, document color coding, and laser targeting pulses on query retrieval.
-- **Bento Vector Matrix**: High-density grid displaying all chunks, coordinate tags, word counts, and snippets.
-- **Engine Settings**: Configurable local LLM endpoint URL, model selector, top-k slider, and temperature controls.
-
----
-
-## 📁 Repository Structure
-
-```
-ContextOS/
-├── backend/
-│   ├── main.py              # FastAPI server, static mounting, SSE streaming
-│   ├── config.py            # Environment settings and paths
-│   ├── document_parser.py   # Multi-format parser (PDF, DOCX, TXT, MD, CSV, JSON)
-│   ├── chunker.py           # Recursive chunker with overlap and metadata
-│   ├── embeddings.py        # 768-D Bionic embeddings + PCA 3D projection
-│   ├── vector_store.py      # Cosine similarity index & JSON persistence
-│   └── llm_service.py       # OpenAI-compatible streaming client + Standby engine
-├── frontend/                # Full React + Vite + Tailwind v4 Application
-│   ├── src/
-│   │   ├── components/      # Navbar, Footer, Hero3DCanvas, Galaxy3DCanvas, InspectorDrawer
-│   │   ├── pages/           # LandingPage.jsx, Dashboard.jsx
-│   │   ├── services/        # api.js client
-│   │   ├── App.jsx          # Root view routing & status polling
-│   │   └── index.css        # Tailwind v4 imports and 21st.dev design tokens
-│   ├── package.json
-│   └── vite.config.js       # Vite configuration with proxy to FastAPI (:8000)
-├── sample_data/             # Preloaded whitepapers & knowledge bases
-├── requirements.txt         # Backend Python dependencies
-├── run.py                   # Single-command unified launcher script
-├── AI_NOTES.md              # Project knowledge base & index
-└── README.md                # Project documentation
-```
-
 ---
 
 ## 📜 License
-Distributed under the MIT License. See `LICENSE` for details.
-
-**Author**: [Pranav](https://github.com/pranav-6944)
+Released under the [MIT License](LICENSE). Architected by Pranav for the AGAI Lab Project Showcase.
