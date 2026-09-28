@@ -49,13 +49,19 @@ export default function AuthPage({ setView }) {
         <div className="absolute bottom-3 left-3 skeuo-screw" />
         <div className="absolute bottom-3 right-3 skeuo-screw" />
 
-        {/* Console Header */}
-        <div className="text-center space-y-2 mb-8">
+        {/* Console Header with Official Vertical Stack Logo */}
+        <div className="text-center space-y-3 mb-8 flex flex-col items-center">
+          <div className="p-3 rounded-2xl skeuo-inset border border-slate-700 bg-slate-900/80 shadow-inner">
+            <img 
+              src="/Vertical_stack_logo.png" 
+              alt="ContextOS Security Emblem" 
+              className="h-20 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(6,182,212,0.5)]" 
+            />
+          </div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full skeuo-inset text-[11px] font-mono text-cyan-400">
             <span className="w-2 h-2 rounded-full bg-cyan-400 skeuo-diode-cyan" />
             <span>OPERATOR CLEARANCE TERMINAL</span>
           </div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">ContextOS Security Gate</h2>
           <p className="text-xs font-mono text-slate-400">Air-Gapped Local Machine Authentication</p>
         </div>
 

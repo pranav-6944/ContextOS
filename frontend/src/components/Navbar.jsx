@@ -11,22 +11,18 @@ export default function Navbar({ currentView, setView, bionicStatus }) {
         {/* Brand Nameplate */}
         <div 
           onClick={() => setView('landing')} 
-          className="flex items-center gap-3.5 cursor-pointer group"
+          className="flex items-center gap-3 cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-xl skeuo-inset p-1.5 flex items-center justify-center group-hover:scale-105 transition-transform border border-slate-700">
-            <img src="/logo.svg" alt="ContextOS Logo" className="w-full h-full drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]" />
+          <div className="h-10 px-2.5 py-1 rounded-xl skeuo-inset flex items-center justify-center group-hover:scale-[1.02] transition-transform border border-slate-700 bg-slate-900/60 shadow-inner">
+            <img 
+              src="/Horizontal_stack_logo.png" 
+              alt="ContextOS Logo" 
+              className="h-7 w-auto object-contain filter drop-shadow-[0_0_8px_rgba(6,182,212,0.4)]" 
+            />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-black text-lg tracking-wider text-slate-100 uppercase font-mono">
-                Context<span className="text-cyan-400">OS</span>
-              </span>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 border border-cyan-500/40 text-cyan-300 font-bold tracking-widest uppercase">
-                MK-IV
-              </span>
-            </div>
-            <p className="text-[10px] text-slate-400 font-mono tracking-widest uppercase hidden sm:block">Tactile Neural Console</p>
-          </div>
+          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 border border-cyan-500/40 text-cyan-300 font-bold tracking-widest uppercase hidden lg:block">
+            MK-IV
+          </span>
         </div>
 
         {/* Center Hardware Selector Keys */}

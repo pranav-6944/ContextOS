@@ -15,14 +15,12 @@ export default function Footer({ setView }) {
         {/* Brand & Specification */}
         <div className="md:col-span-2 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl skeuo-inset p-1.5 flex items-center justify-center border border-slate-700">
-              <img src="/logo.svg" alt="ContextOS" className="w-full h-full drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]" />
-            </div>
-            <div>
-              <span className="font-black text-lg tracking-wider text-slate-100 uppercase font-mono">
-                Context<span className="text-cyan-400">OS</span>
-              </span>
-              <p className="text-[10px] text-slate-400 font-mono tracking-widest uppercase">AIR-GAP NEURAL APPARATUS</p>
+            <div className="h-11 px-3 py-1 rounded-xl skeuo-inset flex items-center justify-center border border-slate-700 bg-slate-900/60 shadow-inner">
+              <img 
+                src="/Horizontal_stack_logo.png" 
+                alt="ContextOS" 
+                className="h-8 w-auto object-contain filter drop-shadow-[0_0_8px_rgba(6,182,212,0.4)]" 
+              />
             </div>
           </div>
           <p className="text-xs text-slate-400 font-mono leading-relaxed max-w-sm">

@@ -33,12 +33,16 @@ export default function DocsPage({ setView }) {
 
         {/* Header Nameplate */}
         <div className="border-b border-white/10 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <span className="text-[10px] font-mono uppercase text-cyan-400 font-bold tracking-wider">
-              OPERATIONAL SCHEMATICS // DOCS-V2.5
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-              ContextOS Technical Manual & API Schematics
+          <div className="space-y-2">
+            <div className="h-10 px-3 py-1 rounded-xl skeuo-inset inline-flex items-center justify-center border border-slate-700 bg-slate-900/60 shadow-inner">
+              <img 
+                src="/Horizontal_stack_logo.png" 
+                alt="ContextOS" 
+                className="h-7 w-auto object-contain filter drop-shadow-[0_0_8px_rgba(6,182,212,0.4)]" 
+              />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-mono">
+              Technical Manual & API Schematics
             </h1>
           </div>
           <div className="px-3 py-1.5 rounded-lg skeuo-inset text-xs font-mono text-cyan-400 self-start">

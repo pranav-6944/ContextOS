@@ -251,12 +251,20 @@ export default function Dashboard({ bionicStatus, onRefreshStatus, setView }) {
       {/* LEFT NAVIGATION SIDEBAR */}
       <aside className="w-64 glass-panel border-r border-white/10 flex flex-col justify-between p-4 z-20">
         
-        {/* Navigation Tabs */}
+        {/* Navigation Tabs with Official Horizontal Logo */}
         <div className="space-y-6">
-          <div className="px-3 pt-2">
-            <span className="text-[11px] font-mono uppercase text-slate-400 font-semibold tracking-wider">
-              Control Matrix
-            </span>
+          <div className="px-1 pt-1 pb-2 border-b border-slate-800/80">
+            <div className="h-10 px-2 py-1 rounded-xl skeuo-inset flex items-center justify-center border border-slate-700 bg-slate-900/60 shadow-inner mb-2">
+              <img 
+                src="/Horizontal_stack_logo.png" 
+                alt="ContextOS" 
+                className="h-7 w-auto object-contain filter drop-shadow-[0_0_6px_rgba(6,182,212,0.4)]" 
+              />
+            </div>
+            <div className="flex items-center justify-between text-[10px] font-mono uppercase text-slate-400 font-semibold px-2">
+              <span>CONTROL MATRIX</span>
+              <span className="text-cyan-400 font-bold">MK-IV</span>
+            </div>
           </div>
 
           <nav className="space-y-1.5">

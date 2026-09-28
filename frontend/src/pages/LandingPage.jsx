@@ -164,12 +164,17 @@ export default function LandingPage({ setView, bionicStatus, stats }) {
           <div className="absolute bottom-4 left-4 w-3.5 h-3.5 skeuo-screw" />
           <div className="absolute bottom-4 right-4 w-3.5 h-3.5 skeuo-screw" />
 
-          {/* Workstation Header Bar */}
+          {/* Workstation Header Bar with Official Horizontal Logo */}
           <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-800">
             <div className="flex items-center gap-3">
               <span className="w-3 h-3 rounded-full skeuo-diode-emerald animate-pulse" />
-              <span className="font-mono text-xs font-bold text-slate-300 uppercase tracking-widest">
-                WORKSTATION CONSOLE // CONTEXTOS-MK-IV
+              <img 
+                src="/Horizontal_stack_logo.png" 
+                alt="ContextOS" 
+                className="h-6 w-auto object-contain filter drop-shadow-[0_0_6px_rgba(6,182,212,0.4)]" 
+              />
+              <span className="font-mono text-xs font-bold text-slate-300 uppercase tracking-widest hidden sm:inline">
+                WORKSTATION CONSOLE
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-cyan-500/40 text-cyan-300 font-bold uppercase">
                 AIR-GAP ACTIVE
@@ -1303,7 +1308,14 @@ python run.py`}
       <section className="py-20 px-6 max-w-5xl mx-auto w-full">
         <div className="skeuo-chassis p-10 sm:p-14 rounded-3xl border border-cyan-500/40 text-center space-y-8 relative overflow-hidden shadow-2xl">
           
-          <div className="space-y-3">
+          <div className="space-y-3 flex flex-col items-center">
+            <div className="p-3 rounded-2xl skeuo-inset border border-slate-700 bg-slate-900/80 shadow-inner mb-2">
+              <img 
+                src="/Vertical_stack_logo.png" 
+                alt="ContextOS Logo" 
+                className="h-16 w-auto object-contain filter drop-shadow-[0_0_10px_rgba(6,182,212,0.5)]" 
+              />
+            </div>
             <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-bold">
               IGNITION WORKSTATION
             </span>

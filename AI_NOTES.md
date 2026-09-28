@@ -50,6 +50,20 @@
 17. **Footer**:
     - Laboratory workstation backplate with corner screws, status diodes, page routing links, and serial stamp.
 
+## Official Brand Assets & Favicons
+- **`Horizontal_stack_logo.png`**:
+  - Primary horizontal brand emblem & typography.
+  - Used in: `Navbar.jsx` (brand header), `Footer.jsx` (backplate brand), `Dashboard.jsx` (sidebar header), `LandingPage.jsx` (workstation console bar), and `DocsPage.jsx` (manual header).
+- **`Vertical_stack_logo.png`**:
+  - Stamped vertical emblem badge.
+  - Used in: `AuthPage.jsx` (security gate clearance badge), `LandingPage.jsx` (Section 16 Final CTA ignition station).
+- **`favicon_io/` Assets (Copied to `frontend/public/` & Linked in `frontend/index.html`)**:
+  - `favicon.ico` (multi-resolution master favicon)
+  - `favicon-32x32.png`, `favicon-16x16.png` (standard browser tabs)
+  - `apple-touch-icon.png` (iOS / macOS touch icon)
+  - `android-chrome-192x192.png`, `android-chrome-512x512.png` (PWA chrome launcher icons)
+  - `site.webmanifest` (PWA web app manifest)
+
 ---
 
 ## Hardware Component Library (`frontend/src/`)
