@@ -276,7 +276,11 @@ async def update_settings(req: SettingsUpdateRequest):
 
     return {"message": "Settings updated", "settings": current_settings}
 
-# Mount Frontend static files
+# Mount Frontend static files (Check dist first for built React SPA)
+FRONTEND_DIST = BASE_DIR / "frontend" / "dist"
 FRONTEND_DIR = BASE_DIR / "frontend"
-if FRONTEND_DIR.exists():
+
+if FRONTEND_DIST.exists():
+    app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
+elif FRONTEND_DIR.exists():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
