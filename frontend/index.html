@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContextOS | Next-Gen 3D Animated RAG Operating System</title>
+  <meta name="description" content="Local-first RAG knowledge platform with 3D neural galaxy visualization, semantic retrieval, and local LLM inference via Bionic / LM Studio.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Styles -->
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- Three.js & OrbitControls via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+  <!-- Background 3D Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+  <div class="ambient-glow"></div>
+
+  <!-- Main Shell -->
+  <div class="app-container">
+
+    <!-- Header HUD -->
+    <header class="hud-header">
+      <div class="brand-section">
+        <div class="brand-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <div>
+          <span class="brand-title">ContextOS</span>
+          <span class="brand-badge">RAG 3D</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs (21st.dev Pill Switcher) -->
+      <nav class="view-tabs">
+        <button class="tab-btn active" data-tab="chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Terminal Chat
+        </button>
+        <button class="tab-btn" data-tab="galaxy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          3D Galaxy
+        </button>
+        <button class="tab-btn" data-tab="pipeline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          3D Pipeline
+        </button>
+        <button class="tab-btn" data-tab="matrix">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Bento Matrix
+        </button>
+      </nav>
+
+      <!-- Status & Actions -->
+      <div class="header-actions">
+        <!-- Bionic Indicator -->
+        <div class="status-pill" id="bionic-status-pill">
+          <span class="status-indicator" id="bionic-indicator"></span>
+          <span id="bionic-text">Bionic: Checking...</span>
+        </div>
+
+        <!-- Model Badge -->
+        <div class="status-pill" style="color: var(--cyan-primary);">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          <span id="model-badge-text">qwen3.5-9b</span>
+        </div>
+
+        <!-- Sound Toggle -->
+        <button class="icon-btn" id="sound-toggle-btn" title="Toggle audio feedback" style="color: var(--cyan-primary);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+
+        <!-- Settings Button -->
+        <button class="icon-btn" id="open-settings-btn" title="RAG Settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+
+        <!-- GitHub Repo Link -->
+        <a class="icon-btn" href="https://github.com/pranav-6944/ContextOS" target="_blank" rel="noopener" title="GitHub Repository">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- Workspace Body -->
+    <div class="workspace-body">
+
+      <!-- Left Sidebar: Document Vault -->
+      <aside class="sidebar-vault">
+        <div class="sidebar-header">
+          <span class="section-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+              <line x1="6" y1="6" x2="6.01" y2="6"></line>
+              <line x1="6" y1="18" x2="6.01" y2="18"></line>
+            </svg>
+            Document Vault
+          </span>
+          <span id="vault-count-badge" class="brand-badge">INDEXED</span>
+        </div>
+
+        <!-- Dropzone -->
+        <div class="vault-dropzone-wrapper">
+          <input type="file" id="file-input" multiple accept=".pdf,.docx,.txt,.md,.csv,.json" style="display: none;">
+          <div class="vault-dropzone" id="vault-dropzone">
+            <div class="dropzone-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <div class="dropzone-text">Drop documents here</div>
+            <div class="dropzone-subtext">PDF, DOCX, TXT, MD, CSV, JSON</div>
+          </div>
+        </div>
+
+        <!-- Sample Pack Loader -->
+        <button class="sample-load-btn" id="load-samples-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          ⚡ Load Sample Knowledge Base
+        </button>
+
+        <!-- Document List -->
+        <div class="vault-file-list" id="vault-file-list"></div>
+      </aside>
+
+      <!-- Center Stage Area -->
+      <main class="center-stage">
+
+        <!-- VIEW 1: RAG Chat HUD -->
+        <div class="view-panel active" id="view-chat">
+          <div class="chat-view-container">
+
+            <!-- Suggestion Pills -->
+            <div class="suggestion-pills-row">
+              <button class="suggestion-pill" data-query="Explain the 5-stage RAG pipeline of ContextOS">Explain RAG Pipeline</button>
+              <button class="suggestion-pill" data-query="How does cosine similarity calculate relevance in 768-D vector space?">Cosine Similarity Math</button>
+              <button class="suggestion-pill" data-query="What is the optimal chunk size and overlap trade-off?">Chunking Trade-offs</button>
+              <button class="suggestion-pill" data-query="Why is ContextOS superior to simple Streamlit apps?">ContextOS vs Streamlit</button>
+            </div>
+
+            <!-- Messages Scroller -->
+            <div class="messages-scroller" id="messages-scroller">
+              <div class="chat-message assistant">
+                <div class="msg-avatar">COS</div>
+                <div class="msg-content-wrapper">
+                  <div class="msg-bubble">
+                    <h3 style="margin-top:0;">Welcome to ContextOS</h3>
+                    <p>An elite, local-first <strong>Retrieval-Augmented Generation (RAG)</strong> operating system with a real-time 3D neural vector space visualizer.</p>
+                    <p>Documents you add to the <strong>Document Vault</strong> are parsed, recursively chunked, embedded into dense vector coordinates, and mapped onto the 3D canvas.</p>
+                    <p>Ask any question below to see semantic retrieval in action with source citations and 3D laser targeting!</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Glowing Input Bar -->
+            <form id="chat-form" class="chat-input-wrapper">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-primary)" stroke-width="2" style="margin-left: 6px;">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="chat-input" class="chat-input-field" placeholder="Ask a question grounded in your documents..." autocomplete="off">
+              <button type="submit" id="send-query-btn" class="send-query-btn" title="Send query">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </form>
+
+          </div>
+        </div>
+
+        <!-- VIEW 2: 3D Galaxy (Overlay HUD) -->
+        <div class="view-panel" id="view-galaxy">
+          <div class="galaxy-controls-hud">
+            <div class="hud-panel">
+              <div class="hud-title">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                </svg>
+                TOTAL CHUNKS
+              </div>
+              <div class="hud-stat-number" id="hud-total-chunks">0</div>
+            </div>
+
+            <div class="hud-panel">
+              <div class="hud-title">RETRIEVAL LATENCY</div>
+              <div class="hud-stat-number" id="hud-latency" style="color: var(--emerald-primary);">0ms</div>
+            </div>
+
+            <div class="hud-panel">
+              <div class="hud-title">STREAMING SPEED</div>
+              <div class="hud-stat-number" id="hud-tps" style="color: var(--purple-primary);">0/s</div>
+            </div>
+
+            <div class="hud-panel">
+              <div class="hud-title">CAMERA NAVIGATION</div>
+              <div class="camera-actions-row">
+                <button class="cam-btn" onclick="visualizer.resetCamera()">Reset View</button>
+                <button class="cam-btn" onclick="visualizer.toggleAutoRotate()">Auto-Rotate</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 3: Interactive 3D Pipeline -->
+        <div class="view-panel" id="view-pipeline">
+          <div class="pipeline-view-container">
+            <div class="pipeline-header">
+              <h2>Interactive RAG Architecture</h2>
+              <p>End-to-end telemetry and execution flow of the ContextOS retrieval engine.</p>
+            </div>
+
+            <div class="pipeline-flow">
+              <!-- Stage 1 -->
+              <div class="pipeline-stage-card">
+                <span class="stage-step-num">STAGE 01</span>
+                <div class="stage-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                </div>
+                <div class="stage-name">Document Parsing</div>
+                <div class="stage-desc">PDF, DOCX, Markdown & tabular extraction preserving structure and page numbers.</div>
+              </div>
+
+              <!-- Stage 2 -->
+              <div class="pipeline-stage-card">
+                <span class="stage-step-num">STAGE 02</span>
+                <div class="stage-icon" style="color: var(--purple-primary); background: rgba(168, 85, 247, 0.1);">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                </div>
+                <div class="stage-name">Recursive Chunking</div>
+                <div class="stage-desc">Overlapping segments (600 chars, 120 overlap) preserving sentence boundaries.</div>
+              </div>
+
+              <!-- Stage 3 -->
+              <div class="pipeline-stage-card">
+                <span class="stage-step-num">STAGE 03</span>
+                <div class="stage-icon" style="color: var(--emerald-primary); background: rgba(16, 185, 129, 0.1);">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                  </svg>
+                </div>
+                <div class="stage-name">Vector Embedding</div>
+                <div class="stage-desc">768-D dense mathematical vectors generated via Nomic Embed v1.5.</div>
+              </div>
+
+              <!-- Stage 4 -->
+              <div class="pipeline-stage-card">
+                <span class="stage-step-num">STAGE 04</span>
+                <div class="stage-icon" style="color: var(--amber-primary); background: rgba(245, 158, 11, 0.1);">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </div>
+                <div class="stage-name">Cosine Retrieval</div>
+                <div class="stage-desc">Dot-product similarity ranking selecting Top-K nearest semantic neighbors.</div>
+              </div>
+
+              <!-- Stage 5 -->
+              <div class="pipeline-stage-card">
+                <span class="stage-step-num">STAGE 05</span>
+                <div class="stage-icon" style="color: var(--rose-primary); background: rgba(244, 63, 94, 0.1);">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                </div>
+                <div class="stage-name">Local LLM Stream</div>
+                <div class="stage-desc">Context-augmented prompt streaming via Bionic / LM Studio GPU server.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 4: Bento Matrix -->
+        <div class="view-panel" id="view-matrix">
+          <div class="bento-view-container">
+            <div class="bento-grid" id="bento-grid"></div>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+
+    <!-- Right Drawer: Chunk & Citation Inspector -->
+    <aside class="inspector-drawer" id="inspector-drawer">
+      <div class="drawer-header">
+        <span class="section-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          Chunk Inspector
+        </span>
+        <button class="delete-doc-btn" id="close-drawer-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="drawer-body" id="drawer-chunk-details"></div>
+    </aside>
+
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="settings-modal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <span class="section-label">RAG Engine Configuration</span>
+        <button class="delete-doc-btn" id="close-settings-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="setting-group">
+          <label class="setting-label">LOCAL LLM ENDPOINT (BIONIC / LM STUDIO)</label>
+          <input type="text" id="setting-base-url" class="setting-input" value="http://localhost:1234/v1">
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">CHAT MODEL SELECTOR</label>
+          <select id="setting-chat-model" class="setting-select">
+            <option value="qwen/qwen3.5-9b">qwen/qwen3.5-9b</option>
+            <option value="google/gemma-4-e2b">google/gemma-4-e2b</option>
+            <option value="qwen3.6-12b-iq">qwen3.6-12b-iq</option>
+            <option value="gemma-4-e4b-uncensored-hauhaucs-aggressive">gemma-4-e4b</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-label">
+            <span>RETRIEVAL TOP-K CHUNKS</span>
+            <span id="top-k-val" style="color: var(--cyan-primary);">4</span>
+          </div>
+          <div class="slider-row">
+            <input type="range" id="setting-top-k" class="setting-range" min="1" max="10" value="4">
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-label">
+            <span>LLM TEMPERATURE</span>
+            <span id="temp-val" style="color: var(--purple-primary);">0.7</span>
+          </div>
+          <div class="slider-row">
+            <input type="range" id="setting-temp" class="setting-range" min="0" max="1.5" step="0.05" value="0.7">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="document.getElementById('settings-modal').classList.remove('open')">Cancel</button>
+        <button class="btn-primary" id="save-settings-btn">Save Configuration</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Core App Scripts -->
+  <script src="/js/three_scene.js"></script>
+  <script src="/js/app.js"></script>
+
+</body>
+</html>

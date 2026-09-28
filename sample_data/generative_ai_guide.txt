@@ -1,0 +1,19 @@
+# Generative AI & Vector Search Handbook
+
+## Core Concepts of Neural Information Retrieval
+
+### 1. Embeddings and Dense Representations
+Unlike lexical keyword search (such as BM25), dense vector embeddings encode semantic relationships. Synonymous terms such as "cardiac infarction" and "heart attack" are located close to each other in 768-dimensional latent space, allowing natural language queries to retrieve relevant documents even without exact keyword matches.
+
+### 2. Cosine Similarity & Distance Metrics
+Cosine similarity measures the cosine of the angle between two multi-dimensional vectors. Given query vector Q and chunk vector C:
+Similarity(Q, C) = (Q . C) / (||Q|| * ||C||)
+For normalized vectors, this simplifies to the dot product. Scores range from -1.0 to +1.0, where 1.0 represents identical orientation in vector space. In ContextOS, chunks scoring above 0.40 are typically considered high-confidence matches.
+
+### 3. Chunking Strategies and Trade-offs
+- Small Chunks (100-300 characters): Higher precision during retrieval, but risk losing critical surrounding context.
+- Large Chunks (1000-2000 characters): Retain full explanations, but dilute vector embeddings with unrelated sentences.
+- Sweet Spot: 500-800 characters with 15-20% overlap provides an ideal balance for technical and academic texts.
+
+### 4. Hallucination Mitigation
+Retrieval-Augmented Generation substantially curtails LLM hallucination by forcing the model to answer strictly from the retrieved text. Citing explicit chunk references empowers human reviewers to verify every assertion against ground-truth source files.

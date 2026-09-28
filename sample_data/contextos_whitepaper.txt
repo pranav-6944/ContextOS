@@ -1,0 +1,27 @@
+# ContextOS Architecture Whitepaper: Next-Generation 3D Retrieval-Augmented Generation
+
+## Executive Summary
+ContextOS is an advanced local-first Retrieval-Augmented Generation (RAG) platform designed to eliminate the latency, privacy vulnerabilities, and opaque mechanics of cloud-based AI pipelines. By pairing high-dimensional vector embeddings with local LLM inference engines (such as LM Studio and Bionic), ContextOS provides private, zero-data-leakage document intelligence for enterprises, researchers, and developers.
+
+## The 5-Stage RAG Pipeline
+ContextOS processes knowledge through five synchronized phases:
+
+1. Document Ingestion & Multi-Format Parsing:
+Incoming documents (PDFs, DOCX, Markdown, Text, CSV) are parsed into structural document segments with page-level metadata. The parser preserves hierarchical boundaries to avoid splitting mid-sentence or mid-tabular structures.
+
+2. Recursive Semantic Chunking:
+Texts are divided into overlapping chunks (typically 600 characters with 120 character overlap). The chunking engine evaluates paragraph markers, sentence delimiters, and whitespace to preserve semantic context.
+
+3. High-Dimensional Vector Embeddings:
+Chunks are transformed into 768-dimensional dense mathematical vectors using local embedding models like text-embedding-nomic-embed-text-v1.5. Vectors capture the underlying semantic meaning rather than mere keyword presence.
+
+4. 3D Spatial Knowledge Projection & Cosine Retrieval:
+Vector representations are projected into a 3D Euclidean coordinate space via Principal Component Analysis (PCA) and SVD. When a user submits a query, it is embedded into the same 768-dimensional vector space. Cosine similarity calculates the nearest neighbor chunks, selecting the top-K highest scoring context nodes.
+
+5. Augmented Generation & Streaming Synthesis:
+The retrieved context chunks are fused with a grounded system prompt and the user question. This payload is passed to a local LLM (such as Qwen 2.5/3.5 or Gemma) via an OpenAI-compatible endpoint (http://localhost:1234/v1). Tokens stream in real time with source citations and confidence metrics.
+
+## Key Advantages Over Traditional Streamlit Architectures
+- Spatial 3D Observability: Unlike static Streamlit widgets, ContextOS provides an interactive WebGL canvas allowing users to inspect the 3D topology of their knowledge graph.
+- Non-Blocking Asynchronous Processing: Built on FastAPI and Web Workers, document indexing occurs without freezing the interface.
+- Complete Hardware Privacy: All computation runs on local Silicon (Metal, CUDA, or Vulkan), with zero external API calls.
