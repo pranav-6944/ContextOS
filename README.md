@@ -2,7 +2,6 @@
   <img src="Vertical_stack_logo.png" alt="ContextOS Logo" width="220" />
 </p>
 
-# ContextOS 🎛️
 ### The Physical Machine for Exploring & Reasoning Over Knowledge
 
 
