@@ -85,9 +85,36 @@
 ---
 
 ## Dedicated Pages
-- **`AuthPage.jsx`**: Biometric thumbprint scanner plate, 12-key numeric PIN keypad, security clearance terminal.
+- **`AuthPage.jsx`**: Biometric thumbprint scanner plate, 12-key numeric PIN keypad, security clearance terminal with local validation, sound effects, and persistent clearance state (`contextos_authenticated`).
 - **`TermsPage.jsx`**: Stamped industrial terms, air-gapped compute license, MIT open source agreement.
 - **`CookiesPage.jsx`**: Zero 3rd-party cookie manifest, storage allocation table, tactile storage purge.
 - **`PrivacyPage.jsx`**: Stamped Air-Gap Security Certificate with 0 outbound network policy.
 - **`DocsPage.jsx`**: Hardware technical manual, Bionic LM Studio connection guide, REST API matrix.
-- **`Dashboard.jsx`**: Full workstation mainframe instrument panel with CRT RAG terminal, Document Vault, VU Spectrum Analyzer, and Dense Vector Matrix.
+- **`Dashboard.jsx`**: Full workstation mainframe instrument panel with:
+  - **Skeuomorphic Workstation Chassis**: Machined metal finish (`.skeuo-chassis`), recessed bezels (`.skeuo-inset`), screw rivets, tactile button keycaps with glowing status diodes.
+  - **Authentication Interlock Gating**:
+    - Only logged-in operators can query the local RAG inference bus or transmit prompts.
+    - If unauthenticated, displays heavy steel security interlock gate plate with clear access restricted warning, locked query input bar (`[LOCKED]`), and direct action to authenticate.
+    - If authenticated (`LVL-4 ACTIVE`), unlocks full RAG Studio, real-time SSE token streaming, and document ingestion.
+  - **Live VU Meter Bridge**: Embedded Dual Galvanometer VU Meters directly on the RAG Studio chat deck displaying real-time needle deflection for Cosine Proximity and Signal Density dB.
+  - **VU Spectrum Analyzer & 2D CRT Radar**:
+    - Resolved missing icon imports (`Sliders`, `SlidersHorizontal`, `Volume2`, `BarChart2`).
+    - Fixed document filter attribute mapping (`d.doc_name` & `d.chunk_count`).
+    - Added 10 pre-computed fallback 768-D semantic vector nodes so the radar displays rich interactive nodes and never renders blank even prior to file uploads.
+    - 10-Band Graphic Spectrum Equalizer displaying real-time frequency distribution (`32Hz` to `16kHz`) with dancing LED bars.
+    - 2D CRT vector projection radar with rotating sweep beam, range rings, and hover inspection cards.
+    - Tactile rotary potentiometers (`SkeuoKnob`) for Zoom Magnification (0.5x to 2.5x) and Proximity Threshold.
+  - **Document Vault**: Physical file cabinet motif with realistic paper document cards (`paper-card`), fiber warmth, folded corners, and drop-down ingestion hopper.
+  - **Bento Vector Matrix**: Memory cartridge grid displaying dense 768-D vector coordinates and word counts.
+  - **Engine Settings**: Industrial rack-mount control panel with rotary dials and toggle switches.
+
+---
+
+## Key File Locations & Line References
+- **`README.md` (Lines 1-3)**: Official Vertical Stack Logo (`Vertical_stack_logo.png`) embedded at the top of the README.
+- **`frontend/src/App.jsx` (Lines 18-35)**: Persistent authentication state (`contextos_authenticated`, `contextos_operator`) and logout/login dispatcher passed to Navbar, AuthPage, and Dashboard.
+- **`frontend/src/components/Navbar.jsx` (Lines 60-128)**: Clearance status badge (`[CLEARANCE: LVL-4 // ACTIVE]` / `[CLEARANCE: LOCKED]`) and one-click Terminal Lock button.
+- **`frontend/src/pages/AuthPage.jsx` (Lines 1-250)**: Mechanical PIN pad, optical biometric thumbprint scanner with sound effects, and persistent credential validation.
+- **`frontend/src/pages/Dashboard.jsx` (Lines 1-720)**: Complete skeuomorphic workstation console, security lockout gate plate, dual galvanometer VU meter bridge, 10-band graphic equalizer, and 2D CRT vector radar.
+- **`frontend/src/components/InspectorDrawer.jsx` (Lines 1-110)**: Grounding inspection drawer with `.skeuo-chassis`, `.skeuo-inset`, and `.skeuo-screen` styling.
+- **`frontend/src/utils/soundEffects.js` (Lines 145-149)**: Web Audio synthesized acoustic sound manager exported as both `sounds` and `soundManager`.

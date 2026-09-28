@@ -145,3 +145,5 @@ class SoundManager {
 }
 
 export const sounds = new SoundManager();
+export const soundManager = sounds;
+export default sounds;

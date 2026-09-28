@@ -1,5 +1,10 @@
+<p align="center">
+  <img src="Vertical_stack_logo.png" alt="ContextOS Logo" width="220" />
+</p>
+
 # ContextOS 🎛️
 ### The Physical Machine for Exploring & Reasoning Over Knowledge
+
 
 [![React](https://img.shields.io/badge/React-19-61DAFB.svg?style=flat&logo=react)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-6-646CFF.svg?style=flat&logo=vite)](https://vitejs.dev)

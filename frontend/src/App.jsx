@@ -15,6 +15,27 @@ export default function App() {
   const [bionicStatus, setBionicStatus] = useState({ online: false });
   const [stats, setStats] = useState({ total_documents: 0, total_chunks: 0 });
 
+  // Persistent Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('contextos_authenticated') === 'true';
+  });
+  const [operatorId, setOperatorId] = useState(() => {
+    return localStorage.getItem('contextos_operator') || 'ADMIN-01';
+  });
+
+  const handleLogin = (id) => {
+    const op = id || 'ADMIN-01';
+    setOperatorId(op);
+    setIsAuthenticated(true);
+    localStorage.setItem('contextos_authenticated', 'true');
+    localStorage.setItem('contextos_operator', op);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('contextos_authenticated');
+  };
+
   // Scroll to top whenever the view changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -42,6 +63,9 @@ export default function App() {
         currentView={currentView} 
         setView={setView} 
         bionicStatus={bionicStatus} 
+        isAuthenticated={isAuthenticated}
+        operatorId={operatorId}
+        onLogout={handleLogout}
       />
 
       <div className="flex-1 flex flex-col">
@@ -61,12 +85,22 @@ export default function App() {
             bionicStatus={bionicStatus} 
             onRefreshStatus={fetchStatus} 
             setView={setView}
+            isAuthenticated={isAuthenticated}
+            operatorId={operatorId}
+            onLoginRequest={() => setView('auth')}
+            onLogout={handleLogout}
           />
         )}
 
         {currentView === 'auth' && (
           <>
-            <AuthPage setView={setView} />
+            <AuthPage 
+              setView={setView} 
+              isAuthenticated={isAuthenticated}
+              operatorId={operatorId}
+              onLoginSuccess={handleLogin}
+              onLogout={handleLogout}
+            />
             <Footer setView={setView} />
           </>
         )}
