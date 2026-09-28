@@ -3,11 +3,19 @@ import sys
 import uvicorn
 from pathlib import Path
 
+# Ensure UTF-8 output on Windows consoles
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 def main():
     print("=" * 65)
-    print("  🚀 ContextOS: Next-Gen 3D RAG Operating System")
-    print("  🔗 Connected to Bionic / LM Studio: http://localhost:1234/v1")
-    print("  🌐 Web Interface: http://localhost:8000")
+    print("  [*] ContextOS: Next-Gen 3D RAG Operating System")
+    print("  [*] Connected to Bionic / LM Studio: http://localhost:1234/v1")
+    print("  [*] Web Interface: http://localhost:8000")
     print("=" * 65)
 
     # Ensure working directory is project root
