@@ -172,3 +172,36 @@
   - Formats citations into glowing evidence cards with confidence score indicators.
   - Converts bold text and lists into illuminated neon dot items.
 
+---
+
+## Syllabus Boundary Detection & Out-of-Syllabus Safeguards (Latest Update)
+
+### 1. Mathematical Syllabus Relevance Boundary (`backend/llm_service.py` L89-130)
+- **Problem Solved**: Previously, random out-of-syllabus questions (e.g. *"What is the capital of France?"*, *"How to bake cookies?"*) forced the nearest unrelated OOP chunk onto the prompt, causing incoherent hallucination.
+- **Dual-Metric Evaluation (`evaluate_syllabus_relevance`)**:
+  1. **Cosine Proximity Threshold**: Ingested syllabus queries exhibit $\ge 0.70 - 0.85+$ cosine similarity, whereas out-of-syllabus questions fall $\le 0.44 - 0.46$.
+  2. **Content Keyword Match Ratio**: Filters English stop-words and checks presence of substantive query tokens in retrieved vector chunks.
+  3. **Classification Rule**:
+     - `top_score >= 0.65` and $\ge 1$ matching keyword $\rightarrow$ **IN-SYLLABUS (Grounded)**.
+     - `top_score >= 0.55` and $\ge 40\%$ matching keywords $\rightarrow$ **IN-SYLLABUS (Grounded)**.
+     - Otherwise $\rightarrow$ **OUT-OF-SYLLABUS (Boundary Alert / General AI)**.
+
+### 2. Dual Response Pathways
+- **In-Syllabus Pathway (`_synthesize_in_syllabus_response` L340-490)**:
+  - Cleans broken OCR mid-sentence line breaks from raw PDF extraction.
+  - Recognizes comparison dimensions and outputs formatted **Markdown Tables** (`| Feature / Dimension | Method Overloading | Method Overriding |`).
+  - Synthesizes clean, syntactically valid C++ code blocks with `main()` instead of dumping broken table text into code blocks.
+  - Renders blockquoted source evidence (`> "..."`).
+- **Out-of-Syllabus Pathway (`_synthesize_out_of_syllabus_response` L250-335)**:
+  - Generates `### ⚠️ Query Boundary: Out of Ingested Syllabus` alert notifying operator that topic is not present in active files (`OOPS Notes.pdf`, etc.) and similarity is below threshold.
+  - Answers the general knowledge question accurately under `### 🎯 Executive Summary` and `### 🔍 Comprehensive Overview`.
+  - Discloses boundaries under `### 📑 Ingested Syllabus Verification` (identifies active coursework topics, status: ❌ Out of Syllabus, and advises uploading relevant syllabus documents to Document Vault).
+  - Concludes with `### 💡 Key Takeaway` on hallucination prevention.
+
+### 3. Markdown Engine Upgrades (`frontend/src/components/FormattedMessage.jsx` L1-220)
+- **Skeuomorphic Data Tables**: Parses `| col1 | col2 |` into responsive tables with frosted cyan headers, alternating zebra striping, and glowing borders.
+- **Indented Blockquotes**: Parses `>` and `  >` into recessed inset callout cards with glowing left accent bar.
+- **Boundary Warning Badge**: Renders `### ⚠️ ...` inside an Amber/Rose caution chassis with a pulsing alert shield and diode.
+- **Terminal Code Window**: Red/amber/green window controls, language badge, and Web Audio acoustic click on copy.
+
+
