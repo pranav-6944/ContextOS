@@ -135,3 +135,40 @@
   3. *"What is the difference between Shallow Copy and Deep Copy?"*
      - Retrieved: Page 14 (82.7% confidence), Page 14 (67.0%), Page 15 (66.7%).
      - Accurately retrieved code example `marks = new int(*(s.marks))` explaining deep copy dynamic allocation vs shallow pointer copy.
+
+---
+
+## Dynamic Local LLM Model Bay & Structured Output (Latest Update)
+
+### 1. Dynamic Model Load / Eject Cartridge System
+- **Backend Architecture (`backend/llm_service.py` L48-185)**:
+  - State flags: `self.is_ejected`, `self.custom_models`, `self.active_model`.
+  - `load_model(model_name)`: Dynamically mounts any detected LM Studio / Bionic model ID or operator-provided custom model identifier (`custom-mistral-7b`, `ollama/...`, etc.). Appends custom IDs to dynamic model catalog.
+  - `eject_model()`: Disengages active local model and sets `self.is_ejected = True`. Seamlessly transitions the neural bus to the onboard **Standby Semantic Synthesizer**.
+  - `stream_rag_response()`: Automatically routes to the local model API if mounted and online, or immediately to the Standby Synthesizer if ejected.
+- **REST Endpoints (`backend/main.py` L76-125)**:
+  - `GET /api/models`: Returns `{ online, models, active_model, is_ejected, active_embedding }`.
+  - `POST /api/models/load`: Accepts `{"model": "..."}` or `{"model_name": "..."}`, mounts cartridge, updates active chat model in memory.
+  - `POST /api/models/eject`: Disengages model cartridge, switches bus mode to Standby Synthesizer.
+- **Frontend API Client (`frontend/src/services/api.js` L22-44)**:
+  - `loadModel(modelId)` and `ejectModel()` with error handling.
+- **Acoustic Feedback (`frontend/src/utils/soundEffects.js` L145-185)**:
+  - `playEject()`: Synthesizes a realistic pneumatic decompression hiss + mechanical spring pop using Web Audio API oscillators and gain envelopes.
+  - `playInsert()`: Synthesizes a heavy magnetic lock clunk on mounting.
+- **Skeuomorphic Workstation UI (`frontend/src/pages/Dashboard.jsx`)**:
+  - **RAG Studio Header Deck (L320-370)**: Live ROM cartridge chip (`CARTRIDGE: [qwen/qwen3.5-9b]` / `[EJECTED // STANDBY]`) with quick-action `[⏏ Eject]` and `[📥 Mount]` buttons.
+  - **Engine Settings — Hardware Neural ROM Bay (L890-990)**: Full industrial cartridge slot chassis with recessed beveled bay, status LED diode (Green for Mounted, Amber pulsing for Ejected), mechanical lever toggle, detected model selector, and custom model manual punch-in input with Mount Cartridge trigger.
+
+### 2. Strictly Structured RAG Output Format
+- **5 Standardized Response Sections (`backend/llm_service.py` L115-185)**:
+  1. `### 🎯 Executive Summary`: High-level grounded synthesis referencing primary source files and page numbers.
+  2. `### 🔍 Core Concepts & Key Analysis`: Bullet points dissecting underlying principles with `[Source X • p.Y]` citations.
+  3. `### 💻 Technical Implementation & Code`: Syntax-highlighted code blocks or algorithmic pseudocode extracted directly from grounded notes.
+  4. `### 📑 Source Grounding & Evidence`: Bulleted citation pills with exact document names, page coordinates, cosine similarity percentages, and excerpt blockquotes.
+  5. `### 💡 Key Takeaway`: Final takeaway regarding air-gapped offline verification and loopback data isolation.
+- **Rich Structured Viewer (`frontend/src/components/FormattedMessage.jsx` L1-175)**:
+  - Detects headers and renders skeuomorphic illuminated badges (`.chassis-badge`).
+  - Renders code blocks inside industrial terminal frames with language pill and one-click copy button.
+  - Formats citations into glowing evidence cards with confidence score indicators.
+  - Converts bold text and lists into illuminated neon dot items.
+

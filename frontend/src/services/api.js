@@ -19,6 +19,29 @@ export const api = {
     return res.json();
   },
 
+  // Load a custom or local LLM model
+  async loadModel(modelId) {
+    const res = await fetch(`${API_BASE}/models/load`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: modelId })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Failed to load model');
+    }
+    return res.json();
+  },
+
+  // Eject current local LLM model to Standby Synthesizer
+  async ejectModel() {
+    const res = await fetch(`${API_BASE}/models/eject`, {
+      method: 'POST'
+    });
+    if (!res.ok) throw new Error('Failed to eject model');
+    return res.json();
+  },
+
   // Get indexed documents
   async getDocuments() {
     const res = await fetch(`${API_BASE}/documents`);

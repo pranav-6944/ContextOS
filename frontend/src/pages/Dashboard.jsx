@@ -5,13 +5,14 @@ import {
   Copy, ExternalLink, HardDrive, Shield, AlertCircle,
   Activity, Radio, Eye, Layers, Filter, Lock, Unlock,
   Sliders, SlidersHorizontal, Volume2, BarChart2, ArrowRight,
-  AlertTriangle, Key, Terminal, FileText
+  AlertTriangle, Key, Terminal, FileText, Disc, RotateCcw
 } from 'lucide-react';
 import { api } from '../services/api';
 import SkeuoMeter from '../components/SkeuoMeter';
 import SkeuoKnob from '../components/SkeuoKnob';
 import SkeuoSwitch from '../components/SkeuoSwitch';
 import InspectorDrawer from '../components/InspectorDrawer';
+import FormattedMessage from '../components/FormattedMessage';
 import { soundManager } from '../utils/soundEffects';
 
 // High-dimension fallback nodes ensuring the VU Radar is NEVER blank
@@ -80,6 +81,17 @@ export default function Dashboard({
   });
   const [toastMessage, setToastMessage] = useState(null);
 
+  // Dynamic Local LLM Model Management State
+  const [availableModels, setAvailableModels] = useState([
+    'qwen/qwen3.5-9b',
+    'google/gemma-4-e2b',
+    'qwen3.6-12b-iq',
+    'gemma-4-e4b-uncensored-hauhaucs-aggressive'
+  ]);
+  const [isModelEjected, setIsModelEjected] = useState(false);
+  const [customModelInput, setCustomModelInput] = useState('');
+  const [isLoadingModel, setIsLoadingModel] = useState(false);
+
   // Animate graphic equalizer slightly for authentic analog life
   useEffect(() => {
     const interval = setInterval(() => {
@@ -91,25 +103,68 @@ export default function Dashboard({
     return () => clearInterval(interval);
   }, []);
 
-  // Load initial documents & chunks
+  // Load initial documents, chunks, and models
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
     try {
-      const [docsRes, chunksRes, statusRes] = await Promise.all([
+      const [docsRes, chunksRes, statusRes, modelsRes] = await Promise.all([
         api.getDocuments(),
         api.getChunks(),
-        api.getStatus()
+        api.getStatus(),
+        api.getModels().catch(() => ({ models: [], is_ejected: false }))
       ]);
       setDocuments(docsRes.documents || []);
       setChunks(chunksRes.chunks || []);
       if (statusRes.settings) {
         setSettings(prev => ({ ...prev, ...statusRes.settings }));
       }
+      if (modelsRes.models && modelsRes.models.length > 0) {
+        setAvailableModels(modelsRes.models);
+      }
+      if (modelsRes.active_model) {
+        setSettings(prev => ({ ...prev, chat_model: modelsRes.active_model }));
+      }
+      if (modelsRes.is_ejected !== undefined) {
+        setIsModelEjected(modelsRes.is_ejected);
+      }
     } catch (err) {
       console.error('Error loading dashboard data:', err);
+    }
+  };
+
+  // Mount/Load Local LLM Model Cartridge
+  const handleLoadModel = async (modelToLoad) => {
+    const target = (modelToLoad || customModelInput || settings.chat_model).trim();
+    if (!target) return;
+    setIsLoadingModel(true);
+    soundManager.playInsert();
+    try {
+      const res = await api.loadModel(target);
+      setIsModelEjected(false);
+      setSettings(prev => ({ ...prev, chat_model: target }));
+      setCustomModelInput('');
+      showToast(res.message || `Model cartridge '${target}' mounted successfully!`);
+      await loadData();
+    } catch (err) {
+      showToast(err.message || 'Failed to mount model');
+    } finally {
+      setIsLoadingModel(false);
+    }
+  };
+
+  // Eject Local LLM Model Cartridge
+  const handleEjectModel = async () => {
+    soundManager.playEject();
+    try {
+      const res = await api.ejectModel();
+      setIsModelEjected(true);
+      showToast(res.message || 'Model cartridge ejected. Switched to Standby Synthesizer.');
+      await loadData();
+    } catch (err) {
+      showToast(err.message || 'Failed to eject model');
     }
   };
 
@@ -535,14 +590,40 @@ export default function Dashboard({
                   </div>
                 </div>
 
-                {/* Center Console Status Badge */}
-                <div className="text-center space-y-1">
+                {/* Center Console Status Badge & Quick Cartridge Control */}
+                <div className="text-center space-y-1.5 flex flex-col items-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full skeuo-inset text-[10px] font-mono text-cyan-300 border border-slate-700">
                     <span className={`w-2 h-2 rounded-full ${isAuthenticated ? 'skeuo-diode-green' : 'skeuo-diode-amber'}`} />
                     <span>{isAuthenticated ? 'RAG PIPELINE READY' : 'INTERLOCK ACTIVE // LOCKED'}</span>
                   </div>
-                  <div className="text-[10px] font-mono text-slate-400">
-                    Model: <span className="text-slate-200 font-bold">{settings.chat_model.split('/')[1] || settings.chat_model}</span> • Top-K: <span className="text-cyan-400 font-bold">{settings.top_k}</span>
+
+                  {/* Model Cartridge Status Chip with Quick Load/Eject Lever */}
+                  <div className="flex items-center gap-2 p-1 px-2.5 rounded-xl skeuo-inset border border-slate-800 text-[10px] font-mono">
+                    <span className={`w-2 h-2 rounded-full ${!isModelEjected ? 'skeuo-diode-green' : 'skeuo-diode-amber'}`} />
+                    <span className="text-slate-400">CARTRIDGE:</span>
+                    <span className="font-bold text-slate-200 truncate max-w-[140px]">
+                      {!isModelEjected ? (settings.chat_model.split('/')[1] || settings.chat_model) : 'EJECTED (STANDBY)'}
+                    </span>
+                    {!isModelEjected ? (
+                      <button
+                        type="button"
+                        onClick={handleEjectModel}
+                        className="ml-1 px-1.5 py-0.5 rounded skeuo-btn text-rose-400 hover:text-rose-300 text-[9px] font-bold uppercase transition-all cursor-pointer"
+                        title="Eject local model cartridge to Standby Synthesizer"
+                      >
+                        ⏏ Eject
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleLoadModel(settings.chat_model || availableModels[0])}
+                        disabled={isLoadingModel}
+                        className="ml-1 px-1.5 py-0.5 rounded skeuo-btn-primary text-white text-[9px] font-bold uppercase transition-all cursor-pointer"
+                        title="Insert & mount local model cartridge"
+                      >
+                        📥 Mount
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -659,9 +740,16 @@ export default function Dashboard({
                       </div>
                     )}
 
-                    <div className="whitespace-pre-wrap font-mono leading-relaxed">
-                      {msg.content || (isStreaming && i === messages.length - 1 ? '▋' : '')}
-                    </div>
+                    {msg.role === 'user' ? (
+                      <div className="whitespace-pre-wrap font-mono leading-relaxed">
+                        {msg.content}
+                      </div>
+                    ) : (
+                      <FormattedMessage 
+                        content={msg.content} 
+                        isStreaming={isStreaming && i === messages.length - 1} 
+                      />
+                    )}
 
                     {/* Citations Grounding Tray */}
                     {msg.citations && msg.citations.length > 0 && (
@@ -1230,23 +1318,110 @@ export default function Dashboard({
                 </div>
               </div>
 
-              {/* Model Selector */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono uppercase text-slate-300 font-bold">
-                  CHAT MODEL SELECTOR
-                </label>
-                <div className="skeuo-inset rounded-xl p-1.5">
-                  <select
-                    value={settings.chat_model}
-                    onChange={(e) => setSettings({ ...settings, chat_model: e.target.value })}
-                    className="w-full bg-transparent px-3 py-2 text-white font-mono text-sm outline-none cursor-pointer"
-                  >
-                    <option value="qwen/qwen3.5-9b" className="bg-slate-900">qwen/qwen3.5-9b (Local Bionic)</option>
-                    <option value="google/gemma-4-e2b" className="bg-slate-900">google/gemma-4-e2b (Lightweight 2B)</option>
-                    <option value="qwen3.6-12b-iq" className="bg-slate-900">qwen3.6-12b-iq</option>
-                    <option value="gemma-4-e4b-uncensored-hauhaucs-aggressive" className="bg-slate-900">gemma-4-e4b</option>
-                  </select>
+              {/* =========================================================================
+                  TACTILE HARDWARE MODEL CARTRIDGE DECK / NEURAL ROM BAY
+                  ========================================================================= */}
+              <div className="p-5 rounded-2xl skeuo-inset border border-slate-700/80 space-y-4">
+                
+                {/* Cartridge Status Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg skeuo-btn flex items-center justify-center text-cyan-400">
+                      <Disc className="w-4 h-4 animate-spin [animation-duration:8s]" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold font-mono uppercase text-white tracking-wider">
+                        NEURAL WEIGHT CARTRIDGE BAY
+                      </div>
+                      <div className="text-[10px] font-mono text-slate-400">
+                        Hardware model mount, ejection, and runtime bus switching
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Seated Status Diode */}
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full skeuo-chassis border border-slate-700 text-[10px] font-mono font-bold">
+                    <span className={`w-2 h-2 rounded-full ${!isModelEjected ? 'skeuo-diode-green' : 'skeuo-diode-amber'}`} />
+                    <span className={!isModelEjected ? 'text-emerald-400' : 'text-amber-400'}>
+                      {!isModelEjected ? 'CARTRIDGE SEATED' : 'CARTRIDGE EJECTED'}
+                    </span>
+                  </div>
                 </div>
+
+                {/* Active Cartridge Information Display */}
+                <div className="p-3.5 rounded-xl skeuo-screen border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] font-mono text-slate-400 uppercase">ACTIVE MOUNTED CARTRIDGE</span>
+                    <div className="text-sm font-bold font-mono text-cyan-300">
+                      {!isModelEjected ? settings.chat_model : 'NONE (STANDBY SYNTHESIZER ENGAGED)'}
+                    </div>
+                    <div className="text-[10px] font-mono text-slate-500">
+                      {!isModelEjected ? '127.0.0.1:1234/v1 • GPU Acceleration Bus' : 'Air-Gapped Standby Semantic Synthesizer Active'}
+                    </div>
+                  </div>
+
+                  {/* Eject Cartridge Button */}
+                  {!isModelEjected && (
+                    <button
+                      type="button"
+                      onClick={handleEjectModel}
+                      className="px-4 py-2 rounded-xl skeuo-btn text-rose-400 hover:text-rose-300 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer border border-rose-500/30 shadow-lg active:scale-95 transition-all"
+                      title="Physically eject the local model cartridge"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-rose-400" />
+                      <span>⏏ Eject Model</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Model Insertion & Selection Bay */}
+                <div className="space-y-3 pt-2">
+                  <div className="text-[11px] font-mono uppercase text-slate-300 font-bold flex justify-between">
+                    <span>MOUNT DETECTED MODEL</span>
+                    <span className="text-cyan-400 font-normal text-[10px]">{availableModels.length} detected on host</span>
+                  </div>
+
+                  {/* Dropdown of detected local models */}
+                  <div className="skeuo-inset rounded-xl p-1.5 border border-slate-800">
+                    <select
+                      value={settings.chat_model}
+                      onChange={(e) => handleLoadModel(e.target.value)}
+                      disabled={isLoadingModel}
+                      className="w-full bg-transparent px-3 py-2 text-white font-mono text-xs outline-none cursor-pointer"
+                    >
+                      {availableModels.map((m, mIdx) => (
+                        <option key={mIdx} value={m} className="bg-slate-900 text-white font-mono">
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Custom Model Input Slot */}
+                  <div className="space-y-1.5 pt-1">
+                    <span className="text-[10px] font-mono text-slate-400 uppercase">OR ENTER CUSTOM LOCAL MODEL ID / PATH:</span>
+                    <div className="flex gap-2">
+                      <div className="flex-1 skeuo-inset rounded-xl p-1.5 border border-slate-800">
+                        <input
+                          type="text"
+                          value={customModelInput}
+                          onChange={(e) => setCustomModelInput(e.target.value)}
+                          placeholder="e.g. llama-3.2-3b-instruct, mistral-7b, deepseek-r1..."
+                          className="w-full bg-transparent px-3 py-1.5 text-xs font-mono text-white placeholder-slate-500 outline-none"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleLoadModel(customModelInput)}
+                        disabled={!customModelInput.trim() || isLoadingModel}
+                        className="px-4 py-2 rounded-xl skeuo-btn-primary text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-lg"
+                      >
+                        <span>📥 Load</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
               {/* Top-K Selector */}

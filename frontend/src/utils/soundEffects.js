@@ -142,6 +142,56 @@ class SoundManager {
       // AudioContext blocked
     }
   }
+
+  // Mechanical Cartridge Ejection (pneumatic hiss + spring pop)
+  playEject() {
+    if (this.muted) return;
+    try {
+      this.init();
+      if (!this.audioCtx) return;
+
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320, this.audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(80, this.audioCtx.currentTime + 0.15);
+
+      gain.gain.setValueAtTime(0.09, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.15);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.15);
+    } catch (e) {}
+  }
+
+  // Mechanical Cartridge Insertion (solid magnetic lock clunk)
+  playInsert() {
+    if (this.muted) return;
+    try {
+      this.init();
+      if (!this.audioCtx) return;
+
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(140, this.audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(450, this.audioCtx.currentTime + 0.08);
+
+      gain.gain.setValueAtTime(0.12, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.08);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.08);
+    } catch (e) {}
+  }
 }
 
 export const sounds = new SoundManager();

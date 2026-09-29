@@ -73,6 +73,10 @@ class SettingsUpdateRequest(BaseModel):
     chunk_size: Optional[int] = None
     chunk_overlap: Optional[int] = None
 
+class ModelLoadRequest(BaseModel):
+    model: Optional[str] = None
+    model_name: Optional[str] = None
+
 # --- API Routes ---
 
 @app.get("/api/status")
@@ -90,14 +94,32 @@ async def get_system_status():
 
 @app.get("/api/models")
 async def get_available_models():
-    """Fetches list of available models from LM Studio / Bionic."""
+    """Fetches list of available models from LM Studio / Bionic, active model, and ejection state."""
     conn = llm_service.check_connection()
     return {
         "online": conn.get("online", False),
         "models": conn.get("models", []),
-        "active_model": current_settings["chat_model"],
+        "active_model": conn.get("active_model"),
+        "is_ejected": conn.get("is_ejected", False),
         "active_embedding": current_settings["embedding_model"]
     }
+
+@app.post("/api/models/load")
+async def load_custom_model(req: ModelLoadRequest):
+    """Dynamically loads or mounts a custom local LLM model."""
+    target_name = (req.model or req.model_name or "").strip()
+    if not target_name:
+        raise HTTPException(status_code=400, detail="Model name cannot be empty")
+    res = llm_service.load_model(target_name)
+    current_settings["chat_model"] = target_name
+    return res
+
+@app.post("/api/models/eject")
+async def eject_active_model():
+    """Ejects the active local model, switching to Standby Semantic Synthesizer."""
+    res = llm_service.eject_model()
+    current_settings["chat_model"] = "Standby Semantic Synthesizer"
+    return res
 
 @app.get("/api/documents")
 async def list_documents():
