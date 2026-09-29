@@ -210,6 +210,7 @@ async def preload_sample_documents():
     }
 
 @app.post("/api/query")
+@app.post("/api/rag/query")
 async def query_rag(req: QueryRequest):
     """
     Performs vector similarity search and streams the augmented RAG response via SSE.

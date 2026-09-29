@@ -118,3 +118,20 @@
 - **`frontend/src/pages/Dashboard.jsx` (Lines 1-720)**: Complete skeuomorphic workstation console, security lockout gate plate, dual galvanometer VU meter bridge, 10-band graphic equalizer, and 2D CRT vector radar.
 - **`frontend/src/components/InspectorDrawer.jsx` (Lines 1-110)**: Grounding inspection drawer with `.skeuo-chassis`, `.skeuo-inset`, and `.skeuo-screen` styling.
 - **`frontend/src/utils/soundEffects.js` (Lines 145-149)**: Web Audio synthesized acoustic sound manager exported as both `sounds` and `soundManager`.
+- **`backend/main.py` (Line 212)**: Dual query routes (`@app.post("/api/query")` & `@app.post("/api/rag/query")`) with SSE token streaming, cosine search, and citation injection.
+
+---
+
+## Verification & Testing Record: `OOPS Notes.pdf`
+- **File Ingested**: `OOPS Notes.pdf` (599,217 bytes / ~585 KB, 35 pages).
+- **Chunk Count**: 106 chunks generated via recursive character chunking (600 characters, 120 overlap).
+- **Tested Queries & Retrieval Performance**:
+  1. *"What are the key concepts of Object Oriented Programming according to the notes?"*
+     - Retrieved: Page 2 (78.5% confidence), Page 3 (75.8%), Page 8 (73.5%).
+     - Accurately retrieved definitions for Classes, Objects, Encapsulation, Constructor, Inheritance, and Polymorphism.
+  2. *"Explain the Diamond Problem in inheritance and how virtual inheritance solves it according to the notes."*
+     - Retrieved: Page 20 (83.4% confidence), Page 2 (80.5%), Page 21 (80.2%).
+     - Accurately retrieved C++ virtual inheritance syntax (`class B : virtual public A { };`) and Java's single class inheritance rule.
+  3. *"What is the difference between Shallow Copy and Deep Copy?"*
+     - Retrieved: Page 14 (82.7% confidence), Page 14 (67.0%), Page 15 (66.7%).
+     - Accurately retrieved code example `marks = new int(*(s.marks))` explaining deep copy dynamic allocation vs shallow pointer copy.
